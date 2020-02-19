@@ -1,5 +1,3 @@
-
-
 """
  One-click image sorting/labelling script. Copies or moves images from a folder into subfolders. 
  This script launches a GUI which displays one image after the other and lets the user give different labels
@@ -28,8 +26,10 @@
 # don't forget to end it with the sign '/' !
 input_folder = '/file_path/to/image_folder/'
 
+
 # the different folders into which you want to sort the images, e.g. ['cars', 'bikes', 'cats', 'horses', 'shoes']
-labels = ["label1", "label2", "label3"]
+# labels = ["MTP", "NORMAL"]
+labels = ["MTP", "NORMAL"]
 
 # provide either 'copy' or 'move', depending how you want to sort the images into the new folders
 # - 'move' starts where you left off last time sorting, no 'go to #pic', works with number-buttons for labeling, no txt-file for tracking after closing GUI, saves memory
@@ -42,10 +42,11 @@ copy_or_move = 'copy'
 # If you provide a path to file that already exists, than this file will be used for keeping track of the storing.
 # This means: 1st time you run this script and such a file doesn't exist the file will be created and populated,
 # 2nd time you run the same script, and you use the same df_path, the script will use the file to continue the sorting.
-df_path = '/file_path/to/non_existing_file_df.txt'
+# df_path = '/file_path/to/non_existing_file_df.txt'
+df_path = '/home/crysis/Documents/Retina/labels.txt'
 
 # a selection of what file-types to be sorted, anything else will be excluded
-file_extensions = ['.jpg', '.png', '.whatever']
+file_extensions = ['.jpg', '.png', '.tiff', '.jpeg']
 #####
 
 
@@ -273,7 +274,8 @@ class ImageGui:
         self.set_image(df.sorted_in_folder[self.index])
 
     @staticmethod
-    def _load_image(path, size=(400,700)):
+#     def _load_image(path, size=(400,700)):
+    def _load_image(path):  
         """
         Loads and resizes an image from a given path using the Pillow library
         :param path: Path to image
@@ -281,7 +283,10 @@ class ImageGui:
         :return: Resized image
         """
         image = Image.open(path)
-        image = image.resize(size, Image.ANTIALIAS)
+#         size = image.size
+        
+#         image = image.resize(size, Image.ANTIALIAS)
+#         image = image.thumbnail((200,200), Image.ANTIALIAS)
         return image
 
     @staticmethod
