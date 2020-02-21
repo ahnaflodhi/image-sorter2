@@ -24,7 +24,11 @@
 
 # the folder in which the pictures that are to be sorted are stored
 # don't forget to end it with the sign '/' !
-input_folder = '/file_path/to/image_folder/'
+# input_folder = '/file_path/to/image_folder/'
+# input_folder = '/home/crysis/Documents/Retina/image-sorter2/image_folder/'
+input_folder = '../OCT/image_set/OCT/'
+
+
 
 
 # the different folders into which you want to sort the images, e.g. ['cars', 'bikes', 'cats', 'horses', 'shoes']
@@ -43,7 +47,8 @@ copy_or_move = 'copy'
 # This means: 1st time you run this script and such a file doesn't exist the file will be created and populated,
 # 2nd time you run the same script, and you use the same df_path, the script will use the file to continue the sorting.
 # df_path = '/file_path/to/non_existing_file_df.txt'
-df_path = '/home/crysis/Documents/Retina/labels.txt'
+
+df_path = './labels.txt'
 
 # a selection of what file-types to be sorted, anything else will be excluded
 file_extensions = ['.jpg', '.png', '.tiff', '.jpeg']
@@ -69,7 +74,7 @@ class ImageGui:
     Useful, for sorting views into sub views or for removing outliers from the data.
     """
 
-    def __init__(self, master, labels, paths):
+    def __init__(self, master, labels, paths, names):
         """
         Initialise GUI
         :param master: The parent window
@@ -91,6 +96,8 @@ class ImageGui:
         self.index = 0
         self.paths = paths
         self.labels = labels
+        self.file_name = names
+        
         #### added in version 2
         self.sorting_label = 'unsorted'
         ####
@@ -98,6 +105,7 @@ class ImageGui:
         # Number of labels and paths
         self.n_labels = len(labels)
         self.n_paths = len(paths)
+               
 
         # Set empty image container
         self.image_raw = None
@@ -123,6 +131,11 @@ class ImageGui:
         progress_string = "%d/%d" % (self.index+1, self.n_paths)
         self.progress_label = tk.Label(frame, text=progress_string, width=10)
         
+        # Add File Name
+        display_name = "Name = %s" % (self.file_name[self.index])
+        self.name_label = tk.Label(frame, text = display_name, width =10)
+                      
+        
         # Place buttons in grid
         for ll, button in enumerate(self.buttons):
             button.grid(row=0, column=ll, sticky='we')
@@ -130,6 +143,10 @@ class ImageGui:
 
         # Place progress label in grid
         self.progress_label.grid(row=0, column=self.n_labels+2, sticky='we') # +2, since progress_label is placed after
+                                                                            # and the additional 2 buttons "next im", "prev im"
+        
+        # Place name label in grid
+        self.name_label.grid(row=1, column=2, sticky='we') # +2, since progress_label is placed after
                                                                             # and the additional 2 buttons "next im", "prev im"
             
         #### added in version 2
@@ -167,6 +184,9 @@ class ImageGui:
         progress_string = "%d/%d" % (self.index+1, self.n_paths)
         self.progress_label.configure(text=progress_string)
         
+        display_name = "Name = %s" % (self.file_name[self.index])
+        self.name_label.configure(text = display_name)
+        
         #### added in version 2
         sorting_string = df.sorted_in_folder[self.index].split(os.sep)[-2] #shows the last folder in the filepath before the file
         self.sorting_label.configure(text=("in folder: %s" % (sorting_string)))
@@ -190,6 +210,9 @@ class ImageGui:
         sorting_string = df.sorted_in_folder[self.index].split(os.sep)[-2] #shows the last folder in the filepath before the file
         self.sorting_label.configure(text=("in folder: %s" % (sorting_string)))
         
+        display_name = "Name = %s" % (self.file_name[self.index])
+        self.name_label.configure(text = display_name)
+        
         if self.index < self.n_paths:
             self.set_image(df.sorted_in_folder[self.index]) # change path to be out of df
         else:
@@ -207,6 +230,9 @@ class ImageGui:
         
         sorting_string = df.sorted_in_folder[self.index].split(os.sep)[-2] #shows the last folder in the filepath before the file
         self.sorting_label.configure(text=("in folder: %s" % (sorting_string)))
+        
+        display_name = "Name = %s" % (self.file_name[self.index])
+        self.name_label.configure(text = display_name)
         
         if self.index < self.n_paths:
             self.set_image(df.sorted_in_folder[self.index])
@@ -285,7 +311,7 @@ class ImageGui:
         image = Image.open(path)
 #         size = image.size
         
-#         image = image.resize(size, Image.ANTIALIAS)
+        image = image.resize((750,750), Image.ANTIALIAS)
 #         image = image.thumbnail((200,200), Image.ANTIALIAS)
         return image
 
@@ -392,9 +418,8 @@ if __name__ == "__main__":
         df.im_path = paths
         df.sorted_in_folder = paths
     #######
-    
 # Start the GUI
 root = tk.Tk()
-app = ImageGui(root, labels, paths)
+app = ImageGui(root, labels, paths, file_names)
 root.mainloop()
 
